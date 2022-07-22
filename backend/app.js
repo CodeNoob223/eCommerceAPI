@@ -32,7 +32,9 @@ app.post((`${api}/products`), async (req, res) => {
 });
 
 //connect to mongoDB
-mongoose.connect()
+mongoose.connect(process.env.CONNECT_URI).then(() => {
+    console.log("Connected to the database!");
+}).catch((err) => console.log(err));
 
 app.listen(3000, () => {
     console.log("Server is running on http://localhost:3000");
