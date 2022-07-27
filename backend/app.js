@@ -10,29 +10,28 @@ const mongoose = require("mongoose");
 app.use(bodyParser.json());
 app.use(morgan("tiny"));
 
-//create route
+//Routes
 const api = process.env.API_URL;
+const productsRoute = require("./routes/products");
+const ordersRoute = require("./routes/orders");
+const usersRoute = require("./routes/users");
+const categoriesRoute = require("./routes/categories");
 
-app.get(`${api}/products`, async (req, res) => {
-    const product = {
-        id: 1,
-        name: "hair dresser",
-        image: "some_url"
-    };
-    try {
-        res.send(product);
-    } catch(err) {
-        res.status(400).send(err);
-    }
-});
+app.use(`${api}/products`, productsRoute);
+app.use(`${api}/orders`, ordersRoute);
+app.use(`${api}/users`, usersRoute);
+app.use(`${api}/categories`, categoriesRoute);
 
-app.post((`${api}/products`), async (req, res) => {
-    const newProduct = req.body;
-    res.send(newProduct);
-});
 
 //connect to mongoDB
-mongoose.connect(process.env.CONNECT_URI).then(() => {
+mongoose.connect(process.env.CONNECT_URI, 
+    {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        dbName: 'eshop-database'
+    }
+)
+.then(() => {
     console.log("Connected to the database!");
 }).catch((err) => console.log(err));
 
