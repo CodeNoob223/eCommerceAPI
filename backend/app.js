@@ -5,6 +5,11 @@ env.config();
 const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const mongoose = require("mongoose");
+const cors = require("cors");
+
+//Cross origin resource sharing
+app.use(cors());
+app.options("*", cors());
 
 //middleware
 app.use(bodyParser.json());
