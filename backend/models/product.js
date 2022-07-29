@@ -18,9 +18,10 @@ const productSchema = new mongoose.Schema({
         type: String,
         default: ''
     },
-    images: [{
-        type: String
-    }],
+    images: {
+        type: [String],
+        default: []
+    },
     brand: {
         type: String,
         required: true
@@ -33,6 +34,7 @@ const productSchema = new mongoose.Schema({
     category: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Category",
+        default: {name: "none"},
         required: true
     },
     countInStock: {
