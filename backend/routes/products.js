@@ -35,7 +35,13 @@ router.post((`/`), async (req, res) => {
 
 //get the product list
 router.get((`/`), async (req, res) => {
-    const productList = await Product.find(); //tim document trong collection(model) products
+    let filter = {};
+    
+    if (req.query.categories) {
+        filter = {category: req.query.categories.split(",")};
+    }
+
+    const productList = await Product.find(filter); //tim document trong collection(model) products
     try {
         res.status(200).send(productList);
     }catch(err) {
@@ -84,19 +90,32 @@ router.delete((`/:id`), (req,res) => {
         if (!product) {
             return res.status(404).json({success: false, message: "Product not found!"});
         } else {
-            return res.status(200).send({success: true, message: "Product successfully removed!"});
+            return res.status(200).json({success: true, message: "Product successfully removed!"});
         }
     }).catch((err) => {
         return res.status(500).json({success: false, error: err});
     });
 });
 
-//get the ammount of products
-router.get("/get/count",(req, res) => {
-    Product.countDocuments((err, count) => {
-        if (err) return res.status(500).send({success: false, error: err});
-        return res.status(200).send({success: true, productCount: count});
+//get the ammount of existed product
+router.get("/get/count", async (req, res) => {
+    const productCount = await Product.countDocuments().catch(err => {
+        return res.status(400).json({success: false, error: err})
     });
+    if (!productCount) return res.status(500).json({success: false});
+
+    res.status(200).json({success: true, productCount: productCount});
 });
+
+//get the featured product only
+router.get("/get/featured/:limit", async(req,res) => {
+    const limit = req.params.limit ? req.params.limit : 0;
+    const featuredProducts = await Product.find({isFeatured: true}).limit(+limit);
+
+    if(!featuredProducts) return res.status(500).json({success: false});
+
+    res.status(200).send(featuredProducts);
+});
+
 
 module.exports = router;

@@ -61,6 +61,14 @@ const productSchema = new mongoose.Schema({
     }
 }); 
 
+productSchema.virtual("id").get(function() {
+    return this._id.toHexString();
+});
+
+productSchema.set("toJSON", {
+    virtuals: true
+});
+
 // model "Product" khi len db se duoc hieu la "con/child" cua "products" nen se duoc gui vao collection "products"
 module.exports = {
     productSchema: productSchema,
