@@ -1,8 +1,9 @@
 function errorHandler() {
     return (err, req, res , next) => {
         if (err) {
-            res.status(err.status).json({
-                message: [err.code, err.name],
+            return res.status(err.status).json({
+                type: err.name,
+                message: err.code,
                 error: err.inner.message
             });
         }
