@@ -9,7 +9,7 @@ router.post((`/`), async (req, res) => {
     const category = await Category.findById(req.body.category);
     if (!category) return res.status(400).send("Category's ID is invalid!");
 
-    const newProduct = new Product({
+    let newProduct = new Product({
         name: req.body.name,
         description: req.body.description,
         richDescription: req.body.richDescription,
@@ -24,13 +24,13 @@ router.post((`/`), async (req, res) => {
         isFeatured: req.body.isFeatured
     });
 
-    const product = await newProduct.save().catch(err => {return res.send(err.message)});
+    newProduct = await newProduct.save().catch(err => {return res.status(500).send(err)});
     
-    if (!product) {
+    if (!newProduct) {
         return res.status(500).send("The product cannot be created!");
     }
 
-    res.status(200).send(product);
+    return res.status(200).send(newProduct);
 });
 
 //get the product list

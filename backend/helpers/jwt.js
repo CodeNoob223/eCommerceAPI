@@ -4,7 +4,7 @@ function authJwt() {
     const secret = process.env.SECRET_TOKEN;
     const api = process.env.API_URL;
     return jwt(
-        { secret: secret, algorithms: ["HS256"] }
+        { secret: secret, algorithms: ["HS256"], isRevoked: isRevoked }
     ).unless(
         {
             path: [
@@ -15,6 +15,14 @@ function authJwt() {
             ]
         }
     );
+}
+
+async function isRevoked(req, token, callBack) {
+    if (!token.payload.isAdmin) {
+        return true;
+    }
+
+    return false;
 }
 
 module.exports = authJwt;

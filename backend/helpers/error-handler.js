@@ -1,12 +1,21 @@
 function errorHandler() {
     return (err, req, res , next) => {
-        if (err) {
-            return res.status(err.status).json({
-                type: err.name,
-                message: err.code,
-                error: err.inner.message
+        if(err) {
+            return res.status(500).json({message: err});
+        }
+
+        if (err.name === "UnauthorizedError") {
+            return res.status(401).json({
+                message: "The user is not authorized!"
             });
         }
+
+        if (err.name === "ValidationError") {
+            return res.status(401).json({
+                message: err
+            });
+        }
+
     }
 }
 
