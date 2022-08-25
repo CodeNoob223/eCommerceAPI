@@ -16,11 +16,11 @@ router.get("/", async (req,res) => {
     if (!orderList) {
         return res.status(500).json({success: false});
     }
-    
+
     res.send(orderList);
 });
 
-//get a specific order
+//get a specific order and populate the ids
 router.get("/:id", async(req, res) => {
     const order = await Order.findById(req.params.id)
     .populate("user", "name")
@@ -94,4 +94,30 @@ router.post("/", async(req, res) => {
     return res.status(200).send(newOrder);
 });
 
+//update an order's status
+router.put("/:id", async (req, res) => {
+    const updatedOrder = await Order.findByIdAndUpdate(
+        req.params.id,
+        {
+            status: req.body.status
+        },
+        {new: true}
+    );
+
+    if (!updatedOrder) {
+        return res.status(400).send("The order's status cannot be updated!");
+    }
+    return res.status(200).send(updatedOrder);
+});
+
+//delete a order
+router.delete("/:id", (req,res) => {
+    Order.findByIdAndDelete(req.params.id).then(order => {
+        if (order) {
+            return res.status(200).json({success: true, message: "The order is removed!"});
+        } else {
+            return res.status(400).json({success: false, message: "The order cannot be removed!"});
+        }
+    }).catch(err => {return res.status(404).json({success: false, error: err})});
+});
 module.exports = router;
