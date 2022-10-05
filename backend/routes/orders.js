@@ -79,7 +79,7 @@ router.post("/", async(req, res) => {
          
             return totalPrice;
         }
-    ));
+    )); 
     
     const totalPrice = totalPrices.reduce((prevVal,nextVal) => prevVal + nextVal, 0);
 
