@@ -140,4 +140,37 @@ router.delete("/:id", (req,res) => {
         }
     }).catch(err => {return res.status(404).json({success: false, error: err})});
 });
-module.exports = router;
+
+//get total sales
+router.get("/get/sales", async (req, res) => {
+    const totalSales = await Order.aggregate([{
+        $group: {_id: null, totalSales: {$sum: '$totalPrice'}}
+    }]);
+    if (!totalSales) return res.status(400).json({success: false, message: "Cannot get total sales!"});
+    return res.status(200).json({success: true, "Total sales": totalSales[0].totalSales});
+});
+
+//get order history for user
+router.get("/get/userorders/:userid", async (req,res) => {
+    const UserOrderList = await Order.find({user: req.params.userid})
+    .populate(
+        {
+            path: "orderItems", 
+            populate: {
+                path: "product",
+                select: ["name", "price", "category"],
+                populate: {
+                    path: "category",
+                    select: ["name", "color"]
+                }
+            }
+        }
+    )
+    .sort({"dateOdered": -1});
+    if (!UserOrderList) {
+        return res.status(500).json({success: false});
+    }
+
+    res.send(UserOrderList);
+});
+module.exports = router; 

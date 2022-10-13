@@ -14,6 +14,7 @@ app.use(cors());
 app.options("*", cors());
 
 //middleware
+app.use("/public/uploads", express.static(__dirname + "/public/uploads"));
 app.use(bodyParser.json());
 app.use(morgan("tiny"));
 app.use(authJwt());
