@@ -73,7 +73,7 @@ router.post("/login", async (req,res) => {
                 },
                 process.env.SECRET_TOKEN,
                 {
-                    expiresIn: "1d"
+                    expiresIn: "1w"
                 }
             )            
 
